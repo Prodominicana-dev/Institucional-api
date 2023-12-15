@@ -14,9 +14,23 @@ model Section{
   id Int @id @default(autoincrement())
   name String
   description String?
+  priority Int? @default(1)
+  status Boolean? @default(true)
   url Url[]
   subsection Subsection[]
   documents Documents[]
+}
+
+model Subsection{
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+  priority Int? @default(1)
+  status Boolean? @default(true)
+  section Section @relation(fields: [sectionId], references: [id])
+  sectionId Int
+  documents Documents[]
+  url Url[]
 }
 
 model Url{
@@ -28,25 +42,18 @@ model Url{
   subsectionId Int
 }
 
-model Subsection{
-  id Int @id @default(autoincrement())
-  name String
-  description String?
-  section Section @relation(fields: [sectionId], references: [id])
-  sectionId Int
-  documents Documents[]
-  url Url[]
-}
-
 model Documents{
   id Int @id @default(autoincrement())
   name String
   description String?
+  path String
   date DateTime
   size String
+  period String
+  createdAt DateTime @default(now())
   subsection Subsection? @relation(fields: [subsectionId], references: [id])
-  subsectionId Int
+  subsectionId Int?
   section Section? @relation(fields: [sectionId], references: [id])
-  sectionId Int
+  sectionId Int?
 }
 
