@@ -6,7 +6,6 @@ import {
   Delete,
   Param,
   Body,
-  NotFoundException,
   Res,
   UseInterceptors,
   UploadedFiles,
@@ -15,6 +14,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
 import { DocumentSectionSubsectionDto } from './dto/documents.dto';
 import { Documents, Prisma } from '@prisma/client';
+import { validateUser } from 'src/validation/validation';
 
 const fs = require('fs');
 const path = require('path');
@@ -26,6 +26,12 @@ export class DocumentsController {
   @Get()
   async getAllDocuments(@Res() res) {
     try {
+      const id = res.req.headers.authorization;
+      const auth0Token = await validateUser(
+        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
+        'read:transparency',
+      );
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const documents = await this.documentsService.getAllDocuments();
       return res.status(200).json({ documents });
     } catch (error) {
@@ -40,6 +46,12 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
+      const id = res.req.headers.authorization;
+      const auth0Token = await validateUser(
+        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
+        'read:transparency',
+      );
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const documents =
         await this.documentsService.getDocumentsBySectionOrSubsection(
           body?.sectionId,
@@ -59,7 +71,12 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
-      console.log(files.length);
+      const id = res.req.headers.authorization;
+      const auth0Token = await validateUser(
+        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
+        'create:transparency',
+      );
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       /* Crear la carpeta del documento */
       const pathFolder = path.join(
         process.cwd(),
@@ -84,6 +101,7 @@ export class DocumentsController {
             : `docs/${body.sectionId}/${fileName}`,
           sectionId: Number(body.sectionId),
           subsectionId: body.subsectionId ? Number(body.subsectionId) : null,
+          period: body.period,
         };
 
         await fs.writeFileSync(path.join(pathFolder, fileName), file.buffer);
@@ -92,7 +110,7 @@ export class DocumentsController {
 
       return res.status(200).json({ message: 'Documentos creados' });
     } catch (error) {
-      return res.status(404).json({ error });
+      return res.status(500).json({ error });
     }
   }
 
@@ -105,6 +123,12 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
+      const id = res.req.headers.authorization;
+      const auth0Token = await validateUser(
+        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
+        'update:transparency',
+      );
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       /* Crear la carpeta del documento */
       const pathFolder = path.join(
         process.cwd(),
@@ -129,6 +153,7 @@ export class DocumentsController {
             : `docs/${body.sectionId}/${fileName}`,
           sectionId: Number(body.sectionId),
           subsectionId: body.subsectionId ? Number(body.subsectionId) : null,
+          period: body.period,
         };
 
         await fs.writeFileSync(path.join(pathFolder, fileName), file.buffer);
@@ -137,7 +162,27 @@ export class DocumentsController {
 
       return res.status(200).json({ message: 'Documentos creados' });
     } catch (error) {
-      return res.status(404).json({ error });
+      return res.status(500).json({ error });
+    }
+  }
+
+  /* Borrar un documento */
+  @Delete(':id')
+  async delete(@Param('id') id: number, @Res() res) {
+    try {
+      const id = res.req.headers.authorization;
+      const auth0Token = await validateUser(
+        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
+        'update:transparency',
+      );
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
+      const document = await this.documentsService.getById(id);
+      const pathFolder = path.join(process.cwd(), `public/${document.path}`);
+      await fs.unlinkSync(pathFolder);
+      const documentDeleted = await this.documentsService.delete(id);
+      return res.status(200).json({ documentDeleted });
+    } catch (error) {
+      return res.status(500).json({ error });
     }
   }
 }

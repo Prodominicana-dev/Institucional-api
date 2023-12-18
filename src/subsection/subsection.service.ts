@@ -31,6 +31,29 @@ export class SubsectionService {
   }
 
   /* Obtener todas las subsecciones con todos los datos */
+  async getAllSubsections(): Promise<Subsection[]> {
+    try {
+      const subsection = await this.prismaService.subsection.findMany({
+        where: { status: true },
+        include: { documents: true, url: true },
+      });
+      /* Guardar en URL solo la URL que tenga sectionId y no tenga subsectionId */
+      const subUrl = subsection.filter((section) => {
+        return (section.url = section.url.filter((url) => {
+          return url.sectionId !== null && url.subsectionId !== null;
+        }));
+      });
+      const subDocuments = subUrl.filter((section) => {
+        return (section.documents = section.documents.filter((document) => {
+          return document.sectionId !== null && document.subsectionId !== null;
+        }));
+      });
+
+      return subDocuments;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   /* Obtener una subseccion por ID */
   async getById(id: number): Promise<Subsection> {

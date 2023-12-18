@@ -71,22 +71,16 @@ export class DocumentsService {
     }
   }
 
-  /* Obtener un documento por ID */
+  /* Obtener registro por ID */
   async getById(id: number): Promise<Documents> {
     try {
       return this.prismaService.documents.findUnique({
         where: { id: Number(id) },
-        include: {
-          section: true,
-          subsection: true,
-        },
       });
     } catch (error) {
       throw error;
     }
   }
-
-  /* Obtener documento por nombre */
 
   /* Borrar un documento */
   async delete(id: number): Promise<Documents> {

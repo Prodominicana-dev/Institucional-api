@@ -8,6 +8,5 @@ import { UrlModule } from 'src/url/url.module';
   providers: [SubsectionService, PrismaService],
   controllers: [SubsectionController],
   exports: [SubsectionService],
-  imports: [UrlModule],
 })
 export class SubsectionModule {}

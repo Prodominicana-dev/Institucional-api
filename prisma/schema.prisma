@@ -37,9 +37,9 @@ model Url{
   id Int @id @default(autoincrement())
   url String
   section Section? @relation(fields: [sectionId], references: [id])
-  sectionId Int
+  sectionId Int?
   subsection Subsection? @relation(fields: [subsectionId], references: [id])
-  subsectionId Int
+  subsectionId Int?
 }
 
 model Documents{
@@ -49,7 +49,7 @@ model Documents{
   path String
   date DateTime
   size String
-  period String
+  period String?
   createdAt DateTime @default(now())
   subsection Subsection? @relation(fields: [subsectionId], references: [id])
   subsectionId Int?
