@@ -9,12 +9,14 @@ import {
   Res,
   UseInterceptors,
   UploadedFiles,
+  StreamableFile,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
 import { DocumentSectionSubsectionDto } from './dto/documents.dto';
-import { Documents, Prisma } from '@prisma/client';
 import { validateUser } from 'src/validation/validation';
+import { Response } from 'express';
+import mime from 'mime-types';
 
 const fs = require('fs');
 const path = require('path');
@@ -26,12 +28,6 @@ export class DocumentsController {
   @Get()
   async getAllDocuments(@Res() res) {
     try {
-      const id = res.req.headers.authorization;
-      const auth0Token = await validateUser(
-        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
-        'read:transparency',
-      );
-      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const documents = await this.documentsService.getAllDocuments();
       return res.status(200).json({ documents });
     } catch (error) {
@@ -46,12 +42,6 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
-      const id = res.req.headers.authorization;
-      const auth0Token = await validateUser(
-        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
-        'read:transparency',
-      );
-      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const documents =
         await this.documentsService.getDocumentsBySectionOrSubsection(
           body?.sectionId,
@@ -148,9 +138,7 @@ export class DocumentsController {
           date: new Date(),
           name: fileName,
           size: size.toString(),
-          path: body.subsectionId
-            ? `docs/${body.sectionId}/${body.subsectionId}/${fileName}`
-            : `docs/${body.sectionId}/${fileName}`,
+          path: fileName,
           sectionId: Number(body.sectionId),
           subsectionId: body.subsectionId ? Number(body.subsectionId) : null,
           period: body.period,
@@ -184,5 +172,29 @@ export class DocumentsController {
     } catch (error) {
       return res.status(500).json({ error });
     }
+  }
+
+  /* Obtener los documentos si tiene subsectionId */
+  @Get('/:id/:sid/:document')
+  getImage(
+    @Param(':id') sectionId: number,
+    @Param(':sid') subsectionId: number,
+    @Param(':document') document: string,
+    @Res({ passthrough: true }) res: Response,
+  ): StreamableFile {
+    console.log(sectionId, subsectionId, document);
+    res.set({ 'Content-Type': 'application/pdf' });
+    const documentPath = path.join(
+      process.cwd(),
+      `public/docs/${sectionId}/${subsectionId}/${document}`,
+    );
+    const mimeType = mime.lookup(documentPath);
+    if (!mimeType) {
+      return undefined;
+    }
+    console.log(mimeType);
+    const file = fs.createReadStream(documentPath);
+    const streamableFile = new StreamableFile(file);
+    return streamableFile;
   }
 }
