@@ -19,7 +19,7 @@ model Section{
   description String?
   priority Int? @default(1)
   status Boolean? @default(true)
-  url Url[]
+  url String?
   subsection Subsection[]
   documents Documents[]
 }
@@ -33,16 +33,7 @@ model Subsection{
   section Section @relation(fields: [sectionId], references: [id])
   sectionId Int
   documents Documents[]
-  url Url[]
-}
-
-model Url{
-  id Int @id @default(autoincrement())
-  url String
-  section Section? @relation(fields: [sectionId], references: [id])
-  sectionId Int?
-  subsection Subsection? @relation(fields: [subsectionId], references: [id])
-  subsectionId Int?
+  url String?
 }
 
 model Documents{

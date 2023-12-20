@@ -35,15 +35,10 @@ export class SubsectionService {
     try {
       const subsection = await this.prismaService.subsection.findMany({
         where: { status: true },
-        include: { documents: true, url: true },
+        include: { documents: true },
       });
-      /* Guardar en URL solo la URL que tenga sectionId y no tenga subsectionId */
-      const subUrl = subsection.filter((section) => {
-        return (section.url = section.url.filter((url) => {
-          return url.sectionId !== null && url.subsectionId !== null;
-        }));
-      });
-      const subDocuments = subUrl.filter((section) => {
+
+      const subDocuments = subsection.filter((section) => {
         return (section.documents = section.documents.filter((document) => {
           return document.sectionId !== null && document.subsectionId !== null;
         }));

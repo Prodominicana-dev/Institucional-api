@@ -38,15 +38,9 @@ export class SectionService {
     try {
       const sections = await this.prismaService.section.findMany({
         where: { status: true },
-        include: { documents: true, url: true, subsection: true },
+        include: { documents: true, subsection: true },
       });
-      /* Guardar en URL solo la URL que tenga sectionId y no tenga subsectionId */
-      const secUrl = sections.filter((section) => {
-        return (section.url = section.url.filter((url) => {
-          return url.sectionId !== null && url.subsectionId === null;
-        }));
-      });
-      const secDocuments = secUrl.filter((section) => {
+      const secDocuments = sections.filter((section) => {
         return (section.documents = section.documents.filter((document) => {
           return document.sectionId !== null && document.subsectionId === null;
         }));
