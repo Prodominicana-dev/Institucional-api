@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { SectionService } from './section.service';
 import { validateUser } from 'src/validation/validation';
-
+const CryptoJS = require('crypto-js');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,10 +23,10 @@ export class SectionController {
   async create(@Body() body, @Res() res) {
     try {
       const id = res.req.headers.authorization;
-      const auth0Token = await validateUser(
-        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
-        'create:transparency',
-      );
+      const idBytes = CryptoJS.AES.decrypt(id, process.env.CRYPTO_KEY);
+      const idDecrypted = idBytes.toString(CryptoJS.enc.Utf8);
+      console.log(idDecrypted);
+      const auth0Token = await validateUser(idDecrypted, 'create:transparency');
       if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const section = await this.sectionService.create(body);
       return res.status(201).json({ section });
@@ -56,12 +56,6 @@ export class SectionController {
   @Get(':id')
   async getById(@Param('id') id: number, @Res() res) {
     try {
-      const id = res.req.headers.authorization;
-      const auth0Token = await validateUser(
-        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
-        'read:transparency',
-      );
-      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const section = await this.sectionService.getById(id);
       return res.status(200).json({ section });
     } catch (error) {
@@ -73,12 +67,6 @@ export class SectionController {
   @Get()
   async getAllSections(@Res() res) {
     try {
-      const id = res.req.headers.authorization;
-      const auth0Token = await validateUser(
-        'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
-        'read:transparency',
-      );
-      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
       const sections = await this.sectionService.getAllSections();
       return res.status(200).json({ sections });
     } catch (error) {

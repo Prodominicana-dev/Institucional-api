@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, Section } from '@prisma/client';
 import { DocumentsService } from 'src/documents/documents.service';
-import { UrlService } from 'src/url/url.service';
 
 @Injectable()
 export class SectionService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly documentsService: DocumentsService,
-    private readonly urlService: UrlService,
   ) {}
 
   /* Crear una nueva sección */
