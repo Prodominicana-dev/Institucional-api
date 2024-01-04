@@ -43,7 +43,7 @@ export class SectionService {
           return document.sectionId !== null && document.subsectionId === null;
         }));
       });
-
+      console.log(secDocuments);
       return secDocuments;
     } catch (error) {
       throw error;
