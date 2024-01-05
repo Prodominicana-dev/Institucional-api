@@ -30,7 +30,7 @@ model Subsection{
   description String?
   priority Int? @default(1)
   status Boolean? @default(true)
-  section Section @relation(fields: [sectionId], references: [id])
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sectionId Int
   documents Documents[]
   url String?
@@ -45,9 +45,9 @@ model Documents{
   size String
   period String?
   createdAt DateTime @default(now())
-  subsection Subsection? @relation(fields: [subsectionId], references: [id])
+  subsection Subsection? @relation(fields: [subsectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   subsectionId Int?
-  section Section? @relation(fields: [sectionId], references: [id])
+  section Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sectionId Int?
 }
 
