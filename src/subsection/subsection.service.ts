@@ -16,16 +16,19 @@ export class SubsectionService {
   }
 
   /* Editar una subsección */
-  async update(
-    id: number,
-    data: Prisma.SubsectionUpdateInput,
-  ): Promise<Subsection> {
+  async update(id: number, data: any): Promise<Subsection> {
     try {
-      return this.prismaService.subsection.update({
-        where: { id: Number(id) },
-        data,
-      });
+      console.log('Lo va a hacer');
+      return this.prismaService.subsection
+        .update({
+          where: { id: +id },
+          data,
+        })
+        .then((res) => {
+          return res;
+        });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -34,8 +37,7 @@ export class SubsectionService {
   async getAllSubsections(): Promise<Subsection[]> {
     try {
       const subsection = await this.prismaService.subsection.findMany({
-        where: { status: true },
-        include: { documents: true },
+        include: { documents: true, section: true },
       });
 
       const subDocuments = subsection.filter((section) => {
@@ -55,8 +57,45 @@ export class SubsectionService {
     try {
       return this.prismaService.subsection.findUnique({
         where: { id: Number(id) },
+        include: { documents: true, section: true },
       });
     } catch (error) {
+      throw error;
+    }
+  }
+
+  /* Activar una subseccion */
+  async enable(id: number): Promise<Subsection> {
+    try {
+      return this.prismaService.subsection.update({
+        where: { id: Number(id) },
+        data: { status: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /* Desactivar una subseccion */
+  async disable(id: number): Promise<Subsection> {
+    try {
+      return this.prismaService.subsection.update({
+        where: { id: Number(id) },
+        data: { status: false },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /* Borrar una subseccion */
+  async delete(id: number): Promise<Subsection> {
+    try {
+      return this.prismaService.subsection.delete({
+        where: { id: Number(id) },
+      });
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }
