@@ -37,7 +37,7 @@ export class SectionController {
 
   /* Editar una seccion */
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() body, @Res() res) {
+  async update(@Param('id') id: string, @Body() body, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);
@@ -54,7 +54,7 @@ export class SectionController {
 
   /* Obtener una seccion en especifico */
   @Get(':id')
-  async getById(@Param('id') id: number, @Res() res) {
+  async getById(@Param('id') id: string, @Res() res) {
     try {
       const section = await this.sectionService.getById(id);
       return res.status(200).json({ section });
@@ -87,7 +87,7 @@ export class SectionController {
 
   /* Activar una seccion en especifico */
   @Patch('/adm/activate/:id')
-  async enable(@Param('id') id: number, @Res() res) {
+  async enable(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);
@@ -103,7 +103,7 @@ export class SectionController {
 
   /* Desactivar una seccion en especifico */
   @Patch('/adm/deactivate/:id')
-  async disable(@Param('id') id: number, @Res() res) {
+  async disable(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);
@@ -119,7 +119,7 @@ export class SectionController {
 
   /* Eliminar una seccion en especifico */
   @Delete(':id')
-  async delete(@Param('id') id: number, @Res() res) {
+  async delete(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);

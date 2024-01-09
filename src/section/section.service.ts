@@ -17,18 +17,20 @@ export class SectionService {
     try {
       return this.prismaService.section.create({ data });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Editar una sección */
-  async update(id: number, data: Prisma.SectionUpdateInput): Promise<Section> {
+  async update(id: string, data: Prisma.SectionUpdateInput): Promise<Section> {
     try {
       return this.prismaService.section.update({
-        where: { id: Number(id) },
+        where: { id },
         data,
       });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -48,18 +50,20 @@ export class SectionService {
       });
       return secDocuments;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Obtener una seccion por ID */
-  async getById(id: number): Promise<Section> {
+  async getById(id: string): Promise<Section> {
     try {
       return this.prismaService.section.findUnique({
-        where: { id: Number(id) },
+        where: { id },
         include: { documents: true, subsection: true },
       });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -71,36 +75,39 @@ export class SectionService {
         orderBy: [{ status: 'asc' }, { priority: 'asc' }, { id: 'asc' }],
       });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Activar una seccion */
-  async enable(id: number): Promise<Section> {
+  async enable(id: string): Promise<Section> {
     try {
       return this.prismaService.section.update({
-        where: { id: Number(id) },
+        where: { id },
         data: { status: true },
       });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Desactivar una seccion */
-  async disable(id: number): Promise<Section> {
+  async disable(id: string): Promise<Section> {
     try {
       return this.prismaService.section.update({
-        where: { id: Number(id) },
+        where: { id },
         data: { status: false },
       });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Eliminar una seccion */
-  async deleteS(id: number): Promise<Section> {
+  async deleteS(id: string): Promise<Section> {
     try {
       const section: any = await this.getById(id);
       const documents = section.documents;
@@ -130,7 +137,7 @@ export class SectionService {
         });
       });
       return this.prismaService.section.delete({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       console.log(error);

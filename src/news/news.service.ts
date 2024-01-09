@@ -18,10 +18,10 @@ export class NewsService {
   }
 
   /* Editar noticia */
-  async update(id: number, data: Prisma.NewsUpdateInput): Promise<News> {
+  async update(id: string, data: Prisma.NewsUpdateInput): Promise<News> {
     try {
       return this.prisma.news.update({
-        where: { id: Number(id) },
+        where: { id },
         data,
       });
     } catch (error) {
@@ -30,10 +30,10 @@ export class NewsService {
   }
 
   /* Eliminar noticia */
-  async delete(id: number): Promise<News> {
+  async delete(id: string): Promise<News> {
     try {
       return this.prisma.news.delete({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       throw new Error(error);
@@ -41,10 +41,10 @@ export class NewsService {
   }
 
   /* Buscar noticia por id */
-  async findOne(id: number): Promise<News | null> {
+  async findOne(id: string): Promise<News | null> {
     try {
       return this.prisma.news.findUnique({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       throw new Error(error);

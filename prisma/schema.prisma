@@ -14,7 +14,7 @@ datasource db {
 // Transparencia 
 
 model Section{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String
   description String?
   priority Int? @default(1)
@@ -25,19 +25,19 @@ model Section{
 }
 
 model Subsection{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String
   description String?
   priority Int? @default(1)
   status Boolean? @default(true)
   section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  sectionId Int
+  sectionId String
   documents Documents[]
   url String?
 }
 
 model Documents{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String
   description String?
   path String
@@ -46,15 +46,15 @@ model Documents{
   period String?
   createdAt DateTime @default(now())
   subsection Subsection? @relation(fields: [subsectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  subsectionId Int?
+  subsectionId String?
   section Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  sectionId Int?
+  sectionId String?
 }
 
 // Institución
 
 model News{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   title String
   description String?
   image String?

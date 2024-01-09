@@ -17,12 +17,12 @@ export class DocumentsService {
 
   /* Editar un documento una seccion o subseccion*/
   async update(
-    id: number,
+    id: string,
     data: Prisma.DocumentsUpdateInput,
   ): Promise<Documents> {
     try {
       return this.prismaService.documents.update({
-        where: { id: Number(id) },
+        where: { id },
         data,
       });
     } catch (error) {
@@ -46,18 +46,18 @@ export class DocumentsService {
 
   /* Obtener todos los documentos de una misma seccion o subseccion */
   async getDocumentsBySectionOrSubsection(
-    sectionId: number,
-    subsectionId: number,
+    sectionId: string,
+    subsectionId: string,
   ): Promise<Documents[]> {
     try {
       return this.prismaService.documents.findMany({
         where: {
           OR: [
             {
-              sectionId: Number(sectionId),
+              sectionId,
             },
             {
-              subsectionId: Number(subsectionId),
+              subsectionId,
             },
           ],
         },
@@ -72,10 +72,10 @@ export class DocumentsService {
   }
 
   /* Obtener registro por ID */
-  async getById(id: number): Promise<Documents> {
+  async getById(id: string): Promise<Documents> {
     try {
       return this.prismaService.documents.findUnique({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       throw error;
@@ -83,10 +83,10 @@ export class DocumentsService {
   }
 
   /* Borrar un documento */
-  async delete(id: number): Promise<Documents> {
+  async delete(id: string): Promise<Documents> {
     try {
       return this.prismaService.documents.delete({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       throw error;

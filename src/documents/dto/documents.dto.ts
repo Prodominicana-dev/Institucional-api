@@ -1,5 +1,5 @@
 export class DocumentSectionSubsectionDto {
-  sectionId: number;
-  subsectionId: number;
+  sectionId: string;
+  subsectionId: string;
   period: string;
 }

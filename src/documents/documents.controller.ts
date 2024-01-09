@@ -61,7 +61,7 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
-      const id = res.req.headers.authorization;
+      const _id = res.req.headers.authorization;
       const auth0Token = await validateUser(
         'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
         'create:transparency',
@@ -113,7 +113,7 @@ export class DocumentsController {
     @Res() res,
   ) {
     try {
-      const id = res.req.headers.authorization;
+      const _id = res.req.headers.authorization;
       const auth0Token = await validateUser(
         'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
         'update:transparency',
@@ -156,9 +156,9 @@ export class DocumentsController {
 
   /* Borrar un documento */
   @Delete(':id')
-  async delete(@Param('id') id: number, @Res() res) {
+  async delete(@Param('id') id: string, @Res() res) {
     try {
-      const id = res.req.headers.authorization;
+      const _id = res.req.headers.authorization;
       const auth0Token = await validateUser(
         'waad|xvWsxdou98HCd9yVNO0mfxkYgkNja8yrT_uriBs7Low',
         'update:transparency',

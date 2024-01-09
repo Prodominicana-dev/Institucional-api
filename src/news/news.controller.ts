@@ -107,7 +107,7 @@ export class NewsController {
 
   /* Obtener una noticia por id */
   @Get(':id')
-  async getOneNews(@Param('id') id: number, @Res() res) {
+  async getOneNews(@Param('id') id: string, @Res() res) {
     try {
       const news = await this.newsService.findOne(id);
       return res.status(200).json({ news });

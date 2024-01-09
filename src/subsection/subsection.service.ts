@@ -11,17 +11,18 @@ export class SubsectionService {
     try {
       return this.prismaService.subsection.create({ data });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
   /* Editar una subsección */
-  async update(id: number, data: any): Promise<Subsection> {
+  async update(id: string, data: any): Promise<Subsection> {
     try {
       console.log('Lo va a hacer');
       return this.prismaService.subsection
         .update({
-          where: { id: +id },
+          where: { id },
           data,
         })
         .then((res) => {
@@ -53,10 +54,10 @@ export class SubsectionService {
   }
 
   /* Obtener una subseccion por ID */
-  async getById(id: number): Promise<Subsection> {
+  async getById(id: string): Promise<Subsection> {
     try {
       return this.prismaService.subsection.findUnique({
-        where: { id: Number(id) },
+        where: { id },
         include: { documents: true, section: true },
       });
     } catch (error) {
@@ -65,10 +66,10 @@ export class SubsectionService {
   }
 
   /* Activar una subseccion */
-  async enable(id: number): Promise<Subsection> {
+  async enable(id: string): Promise<Subsection> {
     try {
       return this.prismaService.subsection.update({
-        where: { id: Number(id) },
+        where: { id },
         data: { status: true },
       });
     } catch (error) {
@@ -77,10 +78,10 @@ export class SubsectionService {
   }
 
   /* Desactivar una subseccion */
-  async disable(id: number): Promise<Subsection> {
+  async disable(id: string): Promise<Subsection> {
     try {
       return this.prismaService.subsection.update({
-        where: { id: Number(id) },
+        where: { id },
         data: { status: false },
       });
     } catch (error) {
@@ -89,10 +90,10 @@ export class SubsectionService {
   }
 
   /* Borrar una subseccion */
-  async delete(id: number): Promise<Subsection> {
+  async delete(id: string): Promise<Subsection> {
     try {
       return this.prismaService.subsection.delete({
-        where: { id: Number(id) },
+        where: { id },
       });
     } catch (error) {
       console.log(error);

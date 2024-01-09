@@ -37,7 +37,7 @@ export class SubsectionController {
 
   /* Editar una subseccion */
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() body, @Res() res) {
+  async update(@Param('id') id: string, @Body() body, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       console.log(id);
@@ -56,7 +56,7 @@ export class SubsectionController {
 
   /* Activar una subseccion */
   @Patch('adm/activate/:id')
-  async enable(@Param('id') id: number, @Res() res) {
+  async enable(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       console.log(id);
@@ -74,7 +74,7 @@ export class SubsectionController {
 
   /* Desactivar una subseccion */
   @Patch('adm/deactivate/:id')
-  async disable(@Param('id') id: number, @Res() res) {
+  async disable(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       console.log(id);
@@ -92,7 +92,7 @@ export class SubsectionController {
 
   /* Obtener una subseccion en especifico */
   @Get(':id')
-  async getById(@Param('id') id: number, @Res() res) {
+  async getById(@Param('id') id: string, @Res() res) {
     try {
       const _id = res.req.headers.authorization;
       console.log(id);
@@ -121,20 +121,25 @@ export class SubsectionController {
 
   /* Borrar sección y todos los documentos que tenga de la carpeta */
   @Delete(':id')
-  async delete(@Param('id') id: number, @Res() res) {
-    const _id = res.req.headers.authorization;
-    const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);
-    const idDecrypted = idBytes.toString(CryptoJS.enc.Utf8);
-    console.log(idDecrypted);
-    const auth0Token = await validateUser(idDecrypted, 'delete:transparency');
-    if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
-    const subsection = await this.subsectionService.getById(id);
-    if (!subsection) throw new Error('Subsection not found');
-    const docsPath = path.join(
-      process.cwd(),
-      `public/docs/${subsection.sectionId}/${subsection.id}`,
-    );
-    if (!fs.existsSync(docsPath)) rimraf.sync(docsPath);
-    return this.subsectionService.delete(id);
+  async delete(@Param('id') id: string, @Res() res) {
+    try {
+      const _id = res.req.headers.authorization;
+      const idBytes = CryptoJS.AES.decrypt(_id, process.env.CRYPTO_KEY);
+      const idDecrypted = idBytes.toString(CryptoJS.enc.Utf8);
+      console.log(idDecrypted);
+      const auth0Token = await validateUser(idDecrypted, 'delete:transparency');
+      if (!auth0Token) return res.status(401).json({ error: 'Unauthorized' });
+      const subsection = await this.subsectionService.getById(id);
+      if (!subsection) throw new Error('Subsection not found');
+      const docsPath = path.join(
+        process.cwd(),
+        `public/docs/${subsection.sectionId}/${subsection.id}`,
+      );
+      if (!fs.existsSync(docsPath)) rimraf.sync(docsPath);
+      const ss = await this.subsectionService.delete(id);
+      return res.status(200).json({ ss });
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
 }
